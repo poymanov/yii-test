@@ -15,8 +15,31 @@ $config = [
             'class' => 'yii\caching\FileCache',
         ],
         'user' => [
-            'identityClass' => 'app\models\User',
+            'identityClass' => 'budyaga\users\models\User',
             'enableAutoLogin' => true,
+            'loginUrl' => ['/login'],
+        ],
+        'authClientCollection' => [
+            'class' => 'yii\authclient\Collection',
+            'clients' => [
+                'vkontakte' => [
+                    'class' => 'budyaga\users\components\oauth\VKontakte',
+                    'clientId' => 'XXX',
+                    'clientSecret' => 'XXX',
+                    'scope' => 'email'
+                ],
+                'github' => [
+                    'class' => 'budyaga\users\components\oauth\GitHub',
+                    'clientId' => 'XXX',
+                    'clientSecret' => 'XXX',
+                    'scope' => 'user:email, user'
+                ],
+                'twitter' => [
+                    'class' => 'budyaga\users\components\oauth\Twitter',
+                    'consumerKey' => 'XXX',
+                    'consumerSecret' => 'XXX',
+                ],
+            ],
         ],
         'errorHandler' => [
             'errorAction' => 'site/error',
@@ -42,10 +65,28 @@ $config = [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
             'rules' => [
-                
+                '/signup' => '/user/user/signup',
+                '/login' => '/user/user/login',
+                '/logout' => '/user/user/logout',
+                '/requestPasswordReset' => '/user/user/request-password-reset',
+                '/resetPassword' => '/user/user/reset-password',
+                '/profile' => '/user/user/profile',
+                '/retryConfirmEmail' => '/user/user/retry-confirm-email',
+                '/confirmEmail' => '/user/user/confirm-email',
+                '/unbind/<id:[\w\-]+>' => '/user/auth/unbind',
+                '/oauth/<authclient:[\w\-]+>' => '/user/auth/index'
             ],
         ],
-        
+        'authManager' => [
+            'class' => 'yii\rbac\DbManager',
+        ],        
+    ],
+    'modules' => [
+        'user' => [
+            'class' => 'budyaga\users\Module',
+            'userPhotoUrl' => 'http://example.com/uploads/user/photo',
+            'userPhotoPath' => '@frontend/web/uploads/user/photo'
+        ],
     ],
     'params' => $params,
 ];
